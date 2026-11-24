@@ -1,5 +1,5 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
 const MODES = {
 	FIRST: true,
@@ -7,7 +7,7 @@ const MODES = {
 	RANDOM: true
 }
 
-module.exports = async function* sampler($stream, size=1, mode="FIRST") {
+export default async function* sampler($stream, size=1, mode="FIRST") {
 	assert($stream, 'source stream is required');
 	assert(_.isNumber(size) && size > 0, 'size must be number greater than zero');
 

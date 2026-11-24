@@ -1,13 +1,13 @@
-const assert = require('assert');
+import assert from 'node:assert';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-const transformer = require('../transformer');
-const { array: arraySink, console: consoleSink } = require('../sink');
-const drain = require('../drain');
+import transformer from '../transformer.js';
+import { array as arraySink, console as consoleSink } from '../sink.js';
+import drain from '../drain.js';
 
-const stream = require('../stream');
-const filter = require('../filter');
+import stream from '../stream.js';
+import filter from '../filter.js';
 
 describe('streams', function() {
 	let $source, items;

@@ -1,4 +1,4 @@
-const assert = require('assert');
+import assert from 'node:assert';
 
 /**
  * WIP: "drain" should refer to any implementation that reads a stream and delegates to a sink
@@ -20,7 +20,7 @@ const assert = require('assert');
  * @param {*} initializeSink - whether or not to initialize the sink 
  * @returns 
  */
-module.exports = async function all($stream, $sink, initializeSink=true) {
+export default async function all($stream, $sink, initializeSink=true) {
 	assert($stream, '$stream is required');
 	assert($sink, '$sink is required');
 

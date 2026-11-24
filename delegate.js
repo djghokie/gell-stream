@@ -1,7 +1,7 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
-module.exports = function* delegatingSink(f) {
+export default function* delegatingSink(f) {
 	assert(_.isFunction(f), 'delegate function is required');
 
 	let item = yield;

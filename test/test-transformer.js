@@ -1,9 +1,9 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
-const { array: arraySink } = require('../sink');
-const drain = require('../drain');
-const transformer = require('../transformer');
+import { array as arraySink } from '../sink.js';
+import drain from '../drain.js';
+import transformer from '../transformer.js';
 
 async function* source() {
 	yield [1, 2];

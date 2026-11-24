@@ -1,7 +1,7 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
-module.exports = async function* filter($stream, f) {
+export default async function* filter($stream, f) {
 	assert($stream, 'source stream is required');
 	assert(_.isFunction(f), 'filter function is required');
 

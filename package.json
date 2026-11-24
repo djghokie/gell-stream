@@ -2,7 +2,19 @@
   "name": "gell-stream",
   "version": "0.0.1",
   "description": "gell-based stream processing",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./stream.js",
+    "./delegate": "./delegate.js",
+    "./drain": "./drain.js",
+    "./filter": "./filter.js",
+    "./reducer": "./reducer.js",
+    "./sampler": "./sampler.js",
+    "./sampler-enhanced": "./sampler-enhanced.js",
+    "./sink": "./sink.js",
+    "./spread": "./spread.js",
+    "./transformer": "./transformer.js"
+  },
   "scripts": {
     "test": "mocha --recursive"
   },

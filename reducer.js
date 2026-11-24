@@ -1,7 +1,7 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
-module.exports = async function* reducer(f, initialValue) {
+export default async function* reducer(f, initialValue) {
 	assert(_.isFunction(f), 'reducer function is required');
 
 	let accumulator = initialValue;

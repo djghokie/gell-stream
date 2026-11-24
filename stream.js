@@ -1,13 +1,13 @@
-const assert = require('assert');
-const _ = require('lodash');
+import assert from 'node:assert';
+import _ from 'lodash';
 
-const transformer = require('./transformer');
-const drain = require('./drain');
+import transformer from './transformer.js';
+import drain from './drain.js';
 
-const filter = require('./filter');
-const spread = require('./spread');
-const reducer = require('./reducer');
-const sampler = require('./sampler-enhanced');
+import filter from './filter.js';
+import spread from './spread.js';
+import reducer from './reducer.js';
+import sampler from './sampler-enhanced.js';
 
 function isIterator(arg) {
 	if (_.isUndefined(arg)) return false;
@@ -21,7 +21,7 @@ function isIterator(arg) {
  * @param {*} $source 
  * @returns 
  */
-module.exports = function stream($source) {
+export default function stream($source) {
 	let $last = $source;
 
 	return {

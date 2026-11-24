@@ -1,12 +1,12 @@
-const assert = require('assert');
+import assert from 'node:assert';
 
-const drain = require('../drain');
+import drain from '../drain.js';
 
-const {
+import {
 	setTimeout,
 	setImmediate,
 	setInterval,
-} = require('node:timers/promises');
+} from 'node:timers/promises';
 
 async function* testSink() {
 	console.debug('######', 'sink init');

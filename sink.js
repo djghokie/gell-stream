@@ -62,8 +62,8 @@ function* mapper(f, sink=[]) {
 	}
 }
 
-module.exports = {
+export {
 	array,
-	console: consoleSink,
+	consoleSink as console,
 	mapper
-}
+};

@@ -1,6 +1,6 @@
-const assert = require('assert');
+import assert from 'node:assert';
 
-module.exports = async function sampler($stream, $sink, size=1) {
+export default async function sampler($stream, $sink, size=1) {
 	assert($stream, '$stream is required');
 	assert($sink, '$sink is required');
 

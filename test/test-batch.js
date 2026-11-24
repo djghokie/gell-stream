@@ -1,7 +1,7 @@
-const assert = require('assert');
+import assert from 'node:assert';
 
-// const { console: consoleSink } = require('../sink');
-// const sampler = require('../sampler');
+// import { console as consoleSink } from '../sink.js';
+// import sampler from '../sampler.js';
 
 function* batch() {
 	let items = [];
