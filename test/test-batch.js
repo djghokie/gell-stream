@@ -1,90 +1,45 @@
 import assert from 'node:assert';
 
-// import { console as consoleSink } from '../sink.js';
-// import sampler from '../sampler.js';
+import drain from '../drain.js';
+import sampler from '../sampler.js';
 
-function* batch() {
-	let items = [];
-
-	async function flush() {
-		console.debug('######', 'flushing items', items.length);
-		console.debug('$$$$$$', items);
-
-		items = [];
-	}
-
-	async function doBatch(item) {
-		items.push(item);
-
-		if (items.length >= 5) return flush();
-	}
-
-	let item = yield;
+/**
+ * A sink that groups items into batches and flushes the final, partial batch
+ * when the stream closes it (drain and sampler call return on the sink)
+ */
+function* batchingSink(batches, size) {
+	let batch = [];
 
 	try {
-		while (true) yield doBatch(item);
+		while (true) {
+			const item = yield;
+
+			batch.push(item);
+
+			if (batch.length === size) {
+				batches.push(batch);
+				batch = [];
+			}
+		}
 	} finally {
-		yield flush();
+		if (batch.length) batches.push(batch);
 	}
 }
 
-/**
- * WIP: temporary test to figure out batch flushing
- * 	- idea would be for drain implementations to call return on the sink
- * 	- allows for final sink flushing
- */
-describe.skip('batch processing', function() {
-	it('generator return', function() {
-		function* future() {
-			let count = 0;
+describe('batch processing', function() {
+	it('drain closes the sink so it can flush a final partial batch', async function() {
+		const batches = [];
 
-			yield ++count;
+		await drain([1, 2, 3, 4, 5].values(), batchingSink(batches, 2));
 
-			/*
-			try {
-				yield ++count;
-			} finally {
-				yield ++count;
-			}
-			*/
-
-			/*
-			while (true) {
-				try {
-					yield ++count;
-				} finally {
-					yield 1000;
-				}
-			}
-			*/
-
-			try {
-				while (true) yield ++count;
-			} finally {
-				yield 1000;
-			}
-		}
-
-		let f = future();
-
-		console.debug('######', f.next()); // init
-		console.debug('######', f.next());
-		console.debug('######', f.next());
-		console.debug('######', f.next());
-		console.debug('######', f.next());
-		console.debug('######', f.next());
-		console.debug('######', f.next());
-		console.debug('######', f.return());
+		assert.deepStrictEqual(batches, [[1, 2], [3, 4], [5]]);
 	})
 
-	it('test', function() {
-		const $items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].values();
+	it('sampler closes the sink so it can flush a final partial batch', async function() {
+		const batches = [];
 
-		/**
-		 * TODO: the sampler/drain needs to call return
-		 */
+		await sampler([1, 2, 3, 4, 5].values(), batchingSink(batches, 2), 3);
 
-		// return sampler($items, consoleSink(), 5);
-		return sampler($items, batch(), 8);
+		assert.deepStrictEqual(batches, [[1, 2], [3]]);
 	})
 })

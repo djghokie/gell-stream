@@ -2,66 +2,7 @@ import assert from 'node:assert';
 
 import drain from '../drain.js';
 
-import {
-	setTimeout,
-	setImmediate,
-	setInterval,
-} from 'node:timers/promises';
-
-async function* testSink() {
-	console.debug('######', 'sink init');
-
-	let item = yield;
-
-	while (true) {
-		console.debug('######', item);
-
-		/**
-		 * WIP: if stream is async, values are promises
-		 */
-
-		await item;
-
-		console.debug('$$$$$$', 'done waiting for item');
-
-		item = yield;
-	}
-}
-
-describe.skip('stream drain', function() {
-	describe('base cases', function() {
-		describe('non async stream and sink', function() {
-			it('empty stream', function() {
-				let $items = [].values();
-		
-				let $sink = testSink();
-		
-				return drain($items, $sink);
-			})
-		})
-	})
-
-	describe('async stream', function() {
-		async function read() {
-			console.debug('$$$$$$', 'reading')
-
-			return setTimeout(1000, 'fubar');
-		}
-
-		function* stream() {
-			return read();
-		}
-
-		it('single item', async function() {
-			let $items = stream();
-		
-			let $sink = testSink();
-	
-			await drain($items, $sink);
-		})
-	})
-
-})
+import { setTimeout } from 'node:timers/promises';
 
 describe('drain', function() {
 	function* recordingSink(items) {
@@ -118,5 +59,57 @@ describe('drain', function() {
 		const result = await drain([1, 2].values(), summarizingSink());
 
 		assert.strictEqual(result, 'saw 2');
+	})
+
+	it('sends nothing to the sink for an empty stream', async function() {
+		const items = [];
+
+		await drain([].values(), recordingSink(items));
+
+		assert.deepStrictEqual(items, []);
+	})
+
+	it('waits for each item of an async source', async function() {
+		const items = [];
+		async function* source() {
+			yield await setTimeout(5, 'a');
+			yield await setTimeout(1, 'b');
+		}
+
+		await drain(source(), recordingSink(items));
+
+		assert.deepStrictEqual(items, ['a', 'b']);
+	})
+
+	it('finishes each item in an async sink before reading the next', async function() {
+		const events = [];
+		function* source() {
+			for (const n of [1, 2]) { events.push(`read ${n}`); yield n; }
+		}
+		async function* slowSink() {
+			let item = yield;
+
+			while (true) {
+				events.push(`start ${item}`);
+				await setTimeout(5);
+				events.push(`end ${item}`);
+
+				item = yield;
+			}
+		}
+
+		await drain(source(), slowSink());
+
+		assert.deepStrictEqual(events, ['read 1', 'start 1', 'end 1', 'read 2', 'start 2', 'end 2']);
+	})
+
+	it('does not re-initialize a sink the caller already started', async function() {
+		const items = [];
+		const $sink = recordingSink(items);
+		$sink.next();
+
+		await drain([1, 2].values(), $sink, false);
+
+		assert.deepStrictEqual(items, [1, 2]);
 	})
 })

@@ -127,4 +127,25 @@ describe('streams', function() {
 			assert.strictEqual(closed, true);
 		})
 	})
+
+	describe('validation', function() {
+		for (const method of ['map', 'filter', 'spread', 'reduce']) {
+			it(`${method} requires a function`, function() {
+				assert.throws(() => stream($source)[method]('not a function'), assert.AssertionError);
+			})
+		}
+
+		it('pipe rejects something that is not an iterator', function() {
+			assert.throws(() => stream($source).pipe([1, 2]), assert.AssertionError);
+		})
+
+		it('pipe makes the given iterator the stream the next step reads from', async function() {
+			async function* doubled($items) { for await (const n of $items) yield n * 2; }
+
+			const $chain = stream([1, 2].values());
+			await $chain.pipe(doubled([5, 6].values())).sink(arraySink(items));
+
+			assert.deepStrictEqual(items, [10, 12]);
+		})
+	})
 })
