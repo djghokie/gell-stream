@@ -81,6 +81,14 @@ describe('streams', function() {
 
 			assert.deepStrictEqual(items, [40]);
 		})
+
+		it('passes the sampling mode through', async function() {
+			await stream($source)
+				.sample(2, 'LAST')
+				.sink(arraySink(items));
+
+			assert.deepStrictEqual(items, [50, 60]);
+		})
 	})
 
 	describe('spread', function() {

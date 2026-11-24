@@ -13,7 +13,9 @@
     "./sampler-enhanced": "./sampler-enhanced.js",
     "./sink": "./sink.js",
     "./spread": "./spread.js",
-    "./transformer": "./transformer.js"
+    "./transformer": "./transformer.js",
+    "./tap": "./tap.js",
+    "./batch": "./batch.js"
   },
   "scripts": {
     "test": "mocha --recursive"
