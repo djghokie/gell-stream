@@ -112,4 +112,16 @@ describe('drain', function() {
 
 		assert.deepStrictEqual(items, [1, 2]);
 	})
+
+	it('rejects when the sink fails while starting', async function() {
+		async function* failingSink() { throw new Error('sink failed to start'); }
+
+		await assert.rejects(drain([1].values(), failingSink()), /sink failed to start/);
+	})
+
+	it('rejects when the sink fails on an item', async function() {
+		async function* failingSink() { yield; throw new Error('sink failed on item'); }
+
+		await assert.rejects(drain([1].values(), failingSink()), /sink failed on item/);
+	})
 })

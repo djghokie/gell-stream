@@ -1,8 +1,7 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 export default function* delegatingSink(f) {
-	assert(_.isFunction(f), 'delegate function is required');
+	assert(typeof f === 'function', 'delegate function is required');
 
 	let item = yield;
 

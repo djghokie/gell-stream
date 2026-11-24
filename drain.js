@@ -24,11 +24,6 @@ export default async function all($stream, $sink, initializeSink=true) {
 	assert($stream, '$stream is required');
 	assert($sink, '$sink is required');
 
-	/**
-	 * WIP: errors/rejections from the sink handler seem to get swallowed
-	 * 	- happens during sink initialization
-	 * 	- what happens during sink.next ?
-	 */
 	if (initializeSink)
 		var last = await $sink.next();
 	

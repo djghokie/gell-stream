@@ -1,7 +1,5 @@
 import assert from 'node:assert';
 
-import _ from 'lodash';
-
 import transformer from '../transformer.js';
 import { array as arraySink, console as consoleSink } from '../sink.js';
 import drain from '../drain.js';
@@ -137,14 +135,24 @@ describe('streams', function() {
 	})
 
 	describe('validation', function() {
-		for (const method of ['map', 'filter', 'spread', 'reduce']) {
+		for (const method of ['map', 'filter', 'spread', 'reduce', 'tap']) {
 			it(`${method} requires a function`, function() {
-				assert.throws(() => stream($source)[method]('not a function'), assert.AssertionError);
+				assert.throws(() => stream($source)[method]('not a function'), new RegExp(`${method} function is required`));
 			})
 		}
 
+		it('stream requires an iterator source', function() {
+			assert.throws(() => stream([1, 2]), /stream source must be an iterator/);
+		})
+
 		it('pipe rejects something that is not an iterator', function() {
-			assert.throws(() => stream($source).pipe([1, 2]), assert.AssertionError);
+			assert.throws(() => stream($source).pipe([1, 2]), /pipe requires an iterator/);
+		})
+
+		it('pipe accepts an iterator without a return method', async function() {
+			await stream([1].values()).pipe([7, 8].values()).sink(arraySink(items));
+
+			assert.deepStrictEqual(items, [7, 8]);
 		})
 
 		it('pipe makes the given iterator the stream the next step reads from', async function() {

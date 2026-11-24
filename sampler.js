@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 const MODES = {
 	FIRST: true,
@@ -24,7 +23,7 @@ const MODES = {
  */
 export default async function* sampler($stream, size=1, mode="FIRST", random=Math.random) {
 	assert($stream, 'source stream is required');
-	assert(_.isNumber(size) && size > 0, 'size must be number greater than zero');
+	assert(typeof size === 'number' && size > 0, 'size must be number greater than zero');
 	assert(MODES[mode], `mode must be one of ${Object.keys(MODES).join(', ')}`);
 
 	try {
@@ -66,7 +65,7 @@ export default async function* sampler($stream, size=1, mode="FIRST", random=Mat
 
 /**
  * Samples the first size items of a stream straight into a sink, then closes the sink
- * 	- resolves to the value the sink returns when closed
+ * 	- resolves like drain: the value the sink returns when closed, otherwise the last value it yielded
  * 
  * @param {*} $stream 
  * @param {*} $sink 
@@ -76,8 +75,8 @@ export async function sampleInto($stream, $sink, size=1) {
 	assert($stream, '$stream is required');
 	assert($sink, '$sink is required');
 
-	let last = $sink.next();
-	
+	let last = await $sink.next();
+
 	try {
 		for (let sampled = 0; sampled < size; sampled++) {
 			const next = await $stream.next();
@@ -104,7 +103,8 @@ export async function sampleInto($stream, $sink, size=1) {
 		await $stream.return?.();
 	}
 
-	last = await $sink.return();
+	const closed = await $sink.return();
 
-	return last.value;
+	// same as drain: prefer a value the sink returns when closed; otherwise the last value it yielded
+	return closed.value !== undefined ? closed.value : last?.value;
 }

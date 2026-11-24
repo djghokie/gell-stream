@@ -1,8 +1,7 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 export default async function* reducer(f, initialValue) {
-	assert(_.isFunction(f), 'reducer function is required');
+	assert(typeof f === 'function', 'reducer function is required');
 
 	let accumulator = initialValue;
 

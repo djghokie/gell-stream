@@ -1,6 +1,4 @@
 import assert from 'node:assert';
-import _ from 'lodash';
-
 import { array as arraySink } from '../sink.js';
 import drain from '../drain.js';
 import transformer from '../transformer.js';

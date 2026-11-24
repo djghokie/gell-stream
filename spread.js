@@ -1,9 +1,8 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 export default async function* spread($stream, f) {
 	assert($stream, 'source stream is required');
-	assert(_.isFunction(f), 'spread function is required');
+	assert(typeof f === 'function', 'spread function is required');
 
 	try {
 		for (let next = await $stream.next(); !next.done; next = await $stream.next()) {
@@ -19,5 +18,5 @@ export default async function* spread($stream, f) {
 }
 
 function isIterable(value) {
-	return value != null && (_.isFunction(value[Symbol.iterator]) || _.isFunction(value[Symbol.asyncIterator]));
+	return value != null && (typeof value[Symbol.iterator] === 'function' || typeof value[Symbol.asyncIterator] === 'function');
 }

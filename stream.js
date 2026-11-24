@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 import transformer from './transformer.js';
 import drain from './drain.js';
@@ -11,10 +10,13 @@ import sampler from './sampler.js';
 import tap from './tap.js';
 import batch from './batch.js';
 
+// any object with a next() method; return() is optional (e.g. array iterators do not have one)
 function isIterator(arg) {
-	if (_.isUndefined(arg)) return false;
+	return arg != null && typeof arg.next === 'function';
+}
 
-	return _.isFunction(arg.next) && _.isFunction(arg.return);
+function assertFunction(f, name) {
+	assert(typeof f === 'function', `${name} function is required`);
 }
 
 /**
@@ -24,29 +26,31 @@ function isIterator(arg) {
  * @returns 
  */
 export default function stream($source) {
+	assert(isIterator($source), 'stream source must be an iterator');
+
 	let $last = $source;
 
 	return {
 		filter: function(f) {
-			assert(_.isFunction(f));
+			assertFunction(f, 'filter');
 
 			return this.pipe(filter($last, f));
 		},
 
 		map: function(f) {
-			assert(_.isFunction(f));
+			assertFunction(f, 'map');
 
 			return this.pipe(transformer($last, f));
 		},
 
 		spread: function(f) {
-			assert(_.isFunction(f));
+			assertFunction(f, 'spread');
 
 			return this.pipe(spread($last, f));
 		},
 
 		reduce: function(f, initialValue) {
-			assert(_.isFunction(f));
+			assertFunction(f, 'reduce');
 
 			return this.sink(reducer(f, initialValue));
 		},
@@ -60,7 +64,7 @@ export default function stream($source) {
 		},
 
 		tap: function(f) {
-			assert(_.isFunction(f));
+			assertFunction(f, 'tap');
 
 			return this.pipe(tap($last, f));
 		},
@@ -75,7 +79,7 @@ export default function stream($source) {
 		},
 
 		pipe: function($stream) {
-			assert(isIterator($stream));
+			assert(isIterator($stream), 'pipe requires an iterator');
 
 			$last = $stream;
 

@@ -47,3 +47,44 @@ describe('sampleInto', function() {
 		assert.strictEqual(closed, true);
 	})
 })
+
+describe('sampleInto results', function() {
+	async function* summingSink() {
+		let total = 0;
+		let item = yield total;
+
+		while (true) {
+			total += item;
+
+			item = yield total;
+		}
+	}
+
+	it("resolves to the sink's last yielded value when it returns nothing", async function() {
+		const result = await sampleInto([1, 2, 3, 4].values(), summingSink(), 3);
+
+		assert.strictEqual(result, 6);
+	})
+
+	it("resolves to an async sink's initial value for an empty stream", async function() {
+		const result = await sampleInto([].values(), summingSink(), 3);
+
+		assert.strictEqual(result, 0);
+	})
+
+	it('resolves to the value the sink returns when it has one', async function() {
+		function* summarizingSink() {
+			let count = 0;
+
+			try {
+				while (true) { yield; count++; }
+			} finally {
+				return `saw ${count}`;
+			}
+		}
+
+		const result = await sampleInto([1, 2, 3].values(), summarizingSink(), 2);
+
+		assert.strictEqual(result, 'saw 2');
+	})
+})

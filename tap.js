@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 
 /**
  * Calls f with each item and passes the item through unchanged (f's result is ignored)
@@ -8,7 +7,7 @@ import _ from 'lodash';
  */
 export default async function* tap($stream, f) {
 	assert($stream, 'source stream is required');
-	assert(_.isFunction(f), 'tap function is required');
+	assert(typeof f === 'function', 'tap function is required');
 
 	try {
 		for (let next = await $stream.next(); !next.done; next = await $stream.next()) {
