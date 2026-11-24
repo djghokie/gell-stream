@@ -1,6 +1,6 @@
 {
-  "name": "gell-stream",
-  "version": "0.0.1",
+  "name": "gell-streamz",
+  "version": "0.1.0",
   "description": "gell-based stream processing",
   "type": "module",
   "exports": {
@@ -28,5 +28,8 @@
   },
   "devDependencies": {
     "mocha": "^8.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
