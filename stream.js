@@ -7,7 +7,7 @@ import drain from './drain.js';
 import filter from './filter.js';
 import spread from './spread.js';
 import reducer from './reducer.js';
-import sampler from './sampler-enhanced.js';
+import sampler from './sampler.js';
 import tap from './tap.js';
 import batch from './batch.js';
 

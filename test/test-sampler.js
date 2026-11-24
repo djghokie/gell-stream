@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import sampler from '../sampler-enhanced.js';
+import sampler from '../sampler.js';
 
 async function collect($stream, limit = 100) {
 	const items = [];

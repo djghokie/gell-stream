@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import drain from '../drain.js';
-import sampler from '../sampler.js';
+import { sampleInto } from '../sampler.js';
 import batch from '../batch.js';
 import stream from '../stream.js';
 import { array as arraySink } from '../sink.js';
@@ -41,7 +41,7 @@ describe('batch processing', function() {
 	it('sampler closes the sink so it can flush a final partial batch', async function() {
 		const batches = [];
 
-		await sampler([1, 2, 3, 4, 5].values(), batchingSink(batches, 2), 3);
+		await sampleInto([1, 2, 3, 4, 5].values(), batchingSink(batches, 2), 3);
 
 		assert.deepStrictEqual(batches, [[1, 2], [3]]);
 	})

@@ -10,7 +10,6 @@
     "./filter": "./filter.js",
     "./reducer": "./reducer.js",
     "./sampler": "./sampler.js",
-    "./sampler-enhanced": "./sampler-enhanced.js",
     "./sink": "./sink.js",
     "./spread": "./spread.js",
     "./transformer": "./transformer.js",

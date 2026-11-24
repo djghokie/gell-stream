@@ -80,8 +80,7 @@ Every operator is also available on its own and works directly on iterators:
 | `gell-streamz/filter` | `filter(stream, f)` |
 | `gell-streamz/spread` | `spread(stream, f)` |
 | `gell-streamz/batch` | `batch(stream, size)` |
-| `gell-streamz/sampler-enhanced` | `sampler(stream, size = 1, mode = 'FIRST', random = Math.random)` |
-| `gell-streamz/sampler` | `sampler(stream, sink, size = 1)`: samples the first `size` items straight into a sink |
+| `gell-streamz/sampler` | `sampler(stream, size = 1, mode = 'FIRST', random = Math.random)` (default export); `sampleInto(stream, sink, size = 1)` samples the first `size` items straight into a sink |
 | `gell-streamz/tap` | `tap(stream, f)` |
 | `gell-streamz/reducer` | `reducer(f, initialValue)` (a sink) |
 

@@ -7,7 +7,7 @@ _how streams, operators and sinks fit together_
 * **source**: any iterator (`next()`, optionally `return()`); sync or async
 	* generators, async generators, `array.values()`, paginated queries
 * **operator**: an async generator that reads from a source and yields new items
-	* `transformer` (map), `filter`, `spread`, `batch`, `sampler-enhanced` (sample), `tap`
+	* `transformer` (map), `filter`, `spread`, `batch`, `sampler` (sample), `tap`
 	* operators compose: each one is the source for the next
 * **sink**: a generator that receives items through `yield`
 	* `array`, `mapper`, `console`, `delegate`, `reducer`
