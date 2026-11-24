@@ -97,4 +97,34 @@ describe('streams', function() {
 			assert.deepStrictEqual(items, [10, 11, 12, 13, 14]);
 		})
 	})
+
+	describe('reduce', function() {
+		it('resolves to the reduced value', async function() {
+			const total = await stream($source).reduce((sum, n) => sum + n, 0);
+
+			assert.strictEqual(total, 210);
+		})
+
+		it('reduces falsy items', async function() {
+			const count = await stream([0, 0, 0].values()).reduce(n => n + 1, 0);
+
+			assert.strictEqual(count, 3);
+		})
+	})
+
+	describe('early termination', function() {
+		it('closes the original source when a downstream sample stops', async function() {
+			let closed = false;
+			function* source() { try { yield 1; yield 2; yield 3; } finally { closed = true; } }
+
+			await stream(source())
+				.map(n => n * 2)
+				.filter(() => true)
+				.sample(1)
+				.sink(arraySink(items));
+
+			assert.deepStrictEqual(items, [2]);
+			assert.strictEqual(closed, true);
+		})
+	})
 })

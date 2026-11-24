@@ -72,13 +72,15 @@ export default async function all($stream, $sink, initializeSink=true) {
 		 * 		- this creates problems for some sinks that need to run sequentually
 		 */
 
-		if (next && next.value) last = await $sink.next(next.value);
-	} while (next && !next.done)
+		// NOTE: a done result carries the generator's return value, which is not a stream item
+		if (!next.done) last = await $sink.next(next.value);
+	} while (!next.done)
 
 	/**
 	 * WIP: this effectively closes the sink, which may not be the desired behavior
 	 */
-	last = await $sink.return();
+	const closed = await $sink.return();
 
-	return last.value;
+	// prefer a value the sink returns when closed; otherwise the last value it yielded (e.g. a reducer's accumulator)
+	return closed.value !== undefined ? closed.value : last?.value;
 }
